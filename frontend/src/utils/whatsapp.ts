@@ -1,4 +1,4 @@
-interface FurnitureOrderData {
+export interface FurnitureOrderData {
   title: string;
   price: number | string;
   dimensions: string;
@@ -11,7 +11,7 @@ export const generateWhatsAppLink = (
   whatsappNumber: string,
   furniture: FurnitureOrderData
 ): string => {
-  const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '');
+  const cleanNumber = (whatsappNumber || '996706035765').replace(/[^0-9]/g, '');
   const productUrl = `${window.location.origin}/furniture/${furniture.slug}`;
 
   const message = `Саламатсызбы!
@@ -38,7 +38,7 @@ export const generateCustomRequestLink = (
   budget: string,
   comment: string
 ): string => {
-  const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '');
+  const cleanNumber = (whatsappNumber || '996706035765').replace(/[^0-9]/g, '');
 
   const message = `Саламатсызбы! Өз өлчөмүм боюнча мебель жасатууга буйрутма бергим келет.
 
