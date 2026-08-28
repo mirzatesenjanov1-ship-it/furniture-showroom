@@ -6,5 +6,6 @@ export default defineConfig({
   base: '/furniture-showroom/',
   build: {
     outDir: 'dist',
+    emptyOutDir: true,
   },
 });
