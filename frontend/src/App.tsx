@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, MessageCircle, Search, SlidersHorizontal, Shield } from 'lucide-react';
+import { Globe, MessageCircle, Search, SlidersHorizontal, Shield, Sparkles, PhoneCall } from 'lucide-react';
 import { Language, translations } from './i18n';
 import { AdsterraBanner } from './components/AdsterraBanner';
 
@@ -46,7 +46,16 @@ const SAMPLE_PRODUCTS: Product[] = [
 export default function App() {
   const [lang, setLang] = useState<Language>('ky');
   const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Бардыгы');
   const t = translations[lang];
+
+  const categories = ['Бардыгы', 'Дивандар', 'Столдор', 'Кроваттар'];
+
+  const filteredProducts = SAMPLE_PRODUCTS.filter(p => {
+    const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = selectedCategory === 'Бардыгы' || p.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const handleWhatsAppOrder = (product: Product) => {
     const phone = "996706035765";
@@ -62,31 +71,34 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950">
+      {/* Dynamic Header */}
+      <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 font-bold text-xl shadow-lg shadow-amber-500/20">
+          <div className="flex items-center gap-3 cursor-pointer">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-300 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-amber-500/20 transform hover:rotate-6 transition-transform">
               F
             </div>
-            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-              LUXE FURNITURE
-            </span>
+            <div>
+              <span className="text-xl font-extrabold tracking-wider text-white block leading-none">
+                LUXE <span className="text-amber-400">FURNITURE</span>
+              </span>
+              <span className="text-[10px] tracking-widest text-slate-400 uppercase font-medium">Showroom Platform</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Language Switcher Button */}
-            <div className="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
-              <Globe className="w-4 h-4 text-amber-400 ml-2 mr-1" />
+          <div className="flex items-center gap-3 sm:gap-5">
+            {/* Language Switcher */}
+            <div className="flex items-center bg-slate-800/90 rounded-xl p-1 border border-slate-700/80 shadow-inner">
+              <Globe className="w-4 h-4 text-amber-400 ml-2 mr-1 hidden sm:block" />
               {(['ky', 'ru', 'en'] as Language[]).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className={`px-3 py-1 rounded-md text-xs font-semibold uppercase transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all duration-200 ${
                     lang === l
-                      ? 'bg-amber-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                   }`}
                 >
                   {l}
@@ -94,93 +106,123 @@ export default function App() {
               ))}
             </div>
 
+            {/* Direct WhatsApp Call Button */}
             <a
               href="https://wa.me/996706035765"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all shadow-lg shadow-emerald-900/30"
+              className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all shadow-lg shadow-emerald-950/50 hover:scale-105 active:scale-95"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">+996 706 035 765</span>
+              <MessageCircle className="w-4 h-4 fill-current" />
+              <span className="hidden md:inline">+996 706 035 765</span>
             </a>
           </div>
         </div>
       </header>
 
-      {/* Hero Showcase Background */}
-      <section className="relative py-24 px-4 overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6">
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-950/20 via-slate-950 to-slate-950">
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-1.5 mb-6 text-xs font-medium text-amber-400 backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5" /> Премиум Сапат & Эксклюзив Стил
+          </div>
+          
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white mb-6 leading-tight">
             {t.heroTitle}
           </h1>
-          <p className="text-lg sm:text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
             {t.heroSubtitle}
           </p>
 
+          {/* Search Box */}
           <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-400 w-5 h-5" />
             <input
               type="text"
               placeholder={t.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-900/90 border border-slate-700/80 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-2xl backdrop-blur"
+              className="w-full bg-slate-900/90 border border-slate-700/80 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-2xl backdrop-blur transition-all"
             />
           </div>
         </div>
       </section>
 
-      {/* Adsterra Top Monetization */}
+      {/* Adsterra Top Banner */}
       <div className="max-w-7xl mx-auto px-4">
         <AdsterraBanner type="banner" />
       </div>
 
-      {/* Product Catalog */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-2">
-          <SlidersHorizontal className="w-5 h-5 text-amber-400" />
-          {t.catalogTitle}
-        </h2>
+      {/* Main Showcase Catalog */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
+            <SlidersHorizontal className="w-6 h-6 text-amber-400" />
+            {t.catalogTitle}
+          </h2>
 
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                  selectedCategory === cat
+                    ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+                    : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {SAMPLE_PRODUCTS.map((p) => (
+          {filteredProducts.map((p) => (
             <div
               key={p.id}
-              className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 group"
+              className="group bg-slate-900/90 border border-slate-800/80 rounded-3xl overflow-hidden hover:border-amber-500/40 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col"
             >
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-72 overflow-hidden bg-slate-950">
                 <img
                   src={p.image}
                   alt={p.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-amber-400 border border-amber-500/30">
+                <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-amber-400 border border-amber-500/20">
                   {p.category}
                 </div>
               </div>
 
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
-                
-                <div className="space-y-1 mb-4 text-sm text-slate-400">
-                  <p><span className="text-slate-500">{t.material}:</span> {p.material}</p>
-                  <p><span className="text-slate-500">{t.dimensions}:</span> {p.dimensions}</p>
+              <div className="p-6 flex flex-col flex-grow justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">
+                    {p.title}
+                  </h3>
+                  
+                  <div className="space-y-2 mb-6 text-xs text-slate-400 border-l-2 border-amber-500/30 pl-3">
+                    <p><span className="text-slate-500 font-medium">{t.material}:</span> {p.material}</p>
+                    <p><span className="text-slate-500 font-medium">{t.dimensions}:</span> {p.dimensions}</p>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+                <div className="flex items-center justify-between pt-4 border-t border-slate-800/80">
                   <div>
-                    <span className="text-xs text-slate-500 block">{t.price}</span>
-                    <span className="text-xl font-extrabold text-amber-400">
-                      {p.price.toLocaleString()} KGS
+                    <span className="text-[10px] uppercase tracking-wider text-slate-500 block font-semibold">{t.price}</span>
+                    <span className="text-xl font-black text-amber-400">
+                      {p.price.toLocaleString()} <span className="text-xs font-normal text-slate-400">KGS</span>
                     </span>
                   </div>
 
                   <button
                     onClick={() => handleWhatsAppOrder(p)}
-                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-emerald-950/50"
+                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-950/50 hover:scale-105 active:scale-95"
                   >
-                    <MessageCircle className="w-4 h-4" />
-                    WhatsApp
+                    <MessageCircle className="w-4 h-4 fill-current" />
+                    Заказ кылуу
                   </button>
                 </div>
               </div>
@@ -188,17 +230,30 @@ export default function App() {
           ))}
         </div>
 
-        {/* Adsterra Native Monetization */}
+        {/* Adsterra Native Monetization Zone */}
         <AdsterraBanner type="native" />
       </main>
 
+      {/* Bottom Floating WhatsApp Banner for Usability */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <a
+          href="https://wa.me/996706035765"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-3 bg-emerald-500 text-white px-5 py-3.5 rounded-full shadow-2xl shadow-emerald-500/40 hover:bg-emerald-400 hover:scale-105 transition-all font-bold text-sm"
+        >
+          <PhoneCall className="w-5 h-5 animate-pulse" />
+          <span className="hidden sm:inline">Кеңеш алуу (WhatsApp)</span>
+        </a>
+      </div>
+
       {/* Footer */}
-      <footer className="bg-slate-900 border-t border-slate-800 mt-20 py-10 text-center text-slate-500 text-sm">
+      <footer className="bg-slate-900/60 border-t border-slate-800/80 mt-20 py-8 text-center text-slate-500 text-xs">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p>© 2026 LUXE FURNITURE. Бардык укуктар корголгон.</p>
-          <div className="flex items-center gap-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 text-slate-400">
             <Shield className="w-4 h-4 text-amber-400" />
-            Коопсуз HTTPS туташуусу
+            Коопсуз HTTPS байланышы
           </div>
         </div>
       </footer>
