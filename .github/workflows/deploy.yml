@@ -28,14 +28,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Root Dependencies
-        run: npm install
-
       - name: Install Frontend Dependencies
         run: cd frontend && npm install
 
       - name: Build site
-        run: cd frontend && npx vite build --outDir ../dist
+        run: cd frontend && npx vite build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
