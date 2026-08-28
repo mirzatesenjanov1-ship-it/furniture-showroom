@@ -13,14 +13,16 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String     @id @default(uuid())
+  email     String     @unique
   password  String
   name      String
-  role      Role     @default(ADMIN)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role       @default(ADMIN)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   logs      AuditLog[]
+
+  @@index([email])
 }
 
 model Category {
@@ -28,9 +30,13 @@ model Category {
   name        String
   slug        String    @unique
   description String?
+  sortOrder   Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
+
+  @@index([slug])
+  @@index([sortOrder])
 }
 
 model Product {
@@ -51,6 +57,10 @@ model Product {
 
   @@index([categoryId])
   @@index([isPublished])
+  @@index([slug])
+  @@index([price])
+  @@index([createdAt])
+  @@index([categoryId, isPublished])
 }
 
 model ProductImage {
@@ -58,20 +68,24 @@ model ProductImage {
   url       String
   publicId  String
   isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([productId, isPrimary])
 }
 
 model StoreSettings {
-  id                String   @id @default("default")
-  whatsappNumber    String   @default("996706035765")
-  whatsappDisplay   String   @default("+996 706 035 765")
-  currency          String   @default("KGS")
-  adsterraPopunder  String?
-  adsterraNative    String?
-  adsterraBanner    String?
-  updatedAt         DateTime @updatedAt
+  id               String   @id @default("default")
+  whatsappNumber   String   @default("996706035765")
+  whatsappDisplay  String   @default("+996 706 035 765")
+  currency         String   @default("KGS")
+  adsterraPopunder String?
+  adsterraNative   String?
+  adsterraBanner   String?
+  updatedAt        DateTime @updatedAt
 }
 
 model AuditLog {
@@ -81,4 +95,8 @@ model AuditLog {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   ipAddress String
   createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
 }
