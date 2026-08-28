@@ -3,21 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json}\""
+    "build": "cd frontend && npm install && npm run build"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^1.13.0",
-    "typescript": "^5.4.5"
-  },
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10"
+  }
 }
