@@ -10,40 +10,52 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Бэкенд URL дарегин env өзгөрмөдөн же катуу көрсөтүлгөн серверден алуу
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://furniture-showroom-backend.onrender.com';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('/api/admin/login', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({ email, password }),
       });
+
+      // Респонс JSON экенин текшерүү (HTML 404 чыгып кетсе туура кармоо)
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Серверге туташууда ката чыкты: Бэкенд сервери табылган жок же аткарылбай жатат.');
+      }
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Кирүүдө ката чыкты');
+        throw new Error(data.message || 'Логин же пароль ката!');
       }
 
       localStorage.setItem('admin_token', data.token);
       onLoginSuccess();
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Байланыш катасы');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-      <div className="max-w-md w-full bg-gray-800 rounded-xl p-8 shadow-2xl border border-gray-700">
+    <div className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
+      <div className="max-w-md w-full bg-gray-900 rounded-xl p-8 shadow-2xl border border-gray-800">
         <h2 className="text-2xl font-bold text-white text-center mb-6">Админ Панелге Кирүү</h2>
         
         {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-md mb-4 text-sm text-center">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-lg mb-4 text-sm text-center">
             {error}
           </div>
         )}
@@ -56,7 +68,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-amber-500"
+              className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-amber-500"
               placeholder="admin@example.com"
             />
           </div>
@@ -68,7 +80,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-amber-500"
+              className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-amber-500"
               placeholder="••••••••"
             />
           </div>
