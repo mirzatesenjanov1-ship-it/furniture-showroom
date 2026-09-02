@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Furniture Showroom — Эмерек Салону</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background-color: #1e293b;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      color: #f59e0b;
+    }
+    .admin-btn {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .admin-btn:hover {
+      color: #ffffff;
+      border-color: #f59e0b;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .card {
+      background-color: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 1rem;
+    }
+    .card-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .card-price {
+      color: #f59e0b;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .loading, .error {
+      text-align: center;
+      padding: 3rem;
+      font-size: 1.2rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Эмерек Салону</h1>
+    <a href="#/admin" class="admin-btn">Администратордук кирүү</a>
+  </header>
+
+  <main id="app">
+    <h2>Каталог</h2>
+    <div id="content" class="loading">Маалыматтар жүктөлүүдө...</div>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
