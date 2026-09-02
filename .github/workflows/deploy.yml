@@ -26,6 +26,8 @@ jobs:
 
       - name: Build Vite Application
         working-directory: ./frontend
+        env:
+          CI: false
         run: npm run build
 
       - name: Deploy Build Output to GitHub Pages
