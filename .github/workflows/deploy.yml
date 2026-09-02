@@ -20,17 +20,17 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Frontend Dependencies
+      - name: Install Dependencies
         run: |
           cd frontend
           npm install
 
-      - name: Build Vite React Application
+      - name: Build Application
         run: |
           cd frontend
           npm run build
 
-      - name: Deploy Build Output to GitHub Pages
+      - name: Deploy to GitHub Pages Branch
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: frontend/dist
