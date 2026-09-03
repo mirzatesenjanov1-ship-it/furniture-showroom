@@ -3,5 +3,5 @@
   <ShortName>Эмерек Дүйнөсү</ShortName>
   <Description>Эмерек Дүйнөсү сайтынан заманбап эмеректерди издөө</Description>
   <InputEncoding>UTF-8</InputEncoding>
-  <Url type="text/html" template="https://your-site-url.com/?q={searchTerms}"/>
+  <Url type="text/html" template="https://mirzatesenjanov1-ship-it.github.io/furniture-showroom/"/>
 </OpenSearchDescription>
