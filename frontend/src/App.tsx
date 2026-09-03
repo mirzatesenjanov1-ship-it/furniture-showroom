@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Furniture {
   id: number;
@@ -10,8 +10,9 @@ interface Furniture {
 }
 
 const WHATSAPP_NUMBER = "996706035765";
+const ADMIN_PASSWORD = "mirzat14051999";
 
-const initialFurniture: Furniture[] = [
+const defaultFurniture: Furniture[] = [
   {
     id: 1,
     title: "Заманбап Люкс Диван",
@@ -49,11 +50,70 @@ const initialFurniture: Furniture[] = [
 const categories = ["Баары", "Конок бөлмө", "Ашкана", "Уктоочу бөлмө", "Кабинет"];
 
 export default function App() {
+  const [furnitureList, setFurnitureList] = useState<Furniture[]>(() => {
+    const saved = localStorage.getItem('furniture_items');
+    return saved ? JSON.parse(saved) : defaultFurniture;
+  });
+
   const [selectedCategory, setSelectedCategory] = useState("Баары");
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("Конок бөлмө");
+  const [newPrice, setNewPrice] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem('furniture_items', JSON.stringify(furnitureList));
+  }, [furnitureList]);
+
+  const handleAdminLogin = () => {
+    if (isAdminLoggedIn) {
+      setIsAdminLoggedIn(false);
+    } else {
+      const pass = prompt("Админ сырсөзүн киргизиңиз:");
+      if (pass === ADMIN_PASSWORD) {
+        setIsAdminLoggedIn(true);
+      } else if (pass !== null) {
+        alert("Сырсөз туура эмес!");
+      }
+    }
+  };
+
+  const handleAddFurniture = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle || !newPrice || !newImageUrl) {
+      alert("Сураныч, аталышын, баасын жана сүрөт шилтемесин толтуруңуз!");
+      return;
+    }
+
+    const newItem: Furniture = {
+      id: Date.now(),
+      title: newTitle,
+      category: newCategory,
+      price: Number(newPrice),
+      description: newDescription,
+      imageUrl: newImageUrl
+    };
+
+    setFurnitureList([newItem, ...furnitureList]);
+    setNewTitle("");
+    setNewPrice("");
+    setNewDescription("");
+    setNewImageUrl("");
+    alert("Жаңы эмерек ийгиликтүү кошулду!");
+  };
+
+  const handleDeleteFurniture = (id: number) => {
+    if (confirm("Чын эле бул эмеректи өчүргүңүз келеби?")) {
+      setFurnitureList(furnitureList.filter(item => item.id !== id));
+    }
+  };
 
   const filteredFurniture = selectedCategory === "Баары" 
-    ? initialFurniture 
-    : initialFurniture.filter(item => item.category === selectedCategory);
+    ? furnitureList 
+    : furnitureList.filter(item => item.category === selectedCategory);
 
   const handleOrderViaWhatsApp = (item: Furniture) => {
     const message = `Саламатсызбы! Мен ушул эмеректи буйрутма берейин дедим эле:\n\n*${item.title}*\nКатегория: ${item.category}\nБаасы: ${item.price.toLocaleString()} сом\n\nТолугураак маалымат бере аласызбы?`;
@@ -69,18 +129,69 @@ export default function App() {
             <h1 className="brand-title">Эмерек Дүйнөсү</h1>
             <p className="brand-subtitle">Сапаттуу жана заманбап эмеректер</p>
           </div>
-          <a 
-            href={`https://wa.me/${WHATSAPP_NUMBER}`} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="wa-btn"
-          >
-            WhatsApp
-          </a>
+          <div className="header-actions">
+            <button onClick={handleAdminLogin} className="admin-btn">
+              {isAdminLoggedIn ? "Админден чыгуу" : "Админ панель"}
+            </button>
+            <a 
+              href={`https://wa.me/${WHATSAPP_NUMBER}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="wa-btn"
+            >
+              WhatsApp
+            </a>
+          </div>
         </div>
       </header>
 
       <main className="main-content">
+        {isAdminLoggedIn && (
+          <div className="admin-panel">
+            <h2 className="admin-title">Жаңы эмерек кошуу</h2>
+            <form onSubmit={handleAddFurniture} className="admin-form">
+              <input 
+                type="text" 
+                placeholder="Эмеректин аталышы" 
+                value={newTitle} 
+                onChange={(e) => setNewTitle(e.target.value)} 
+                className="admin-input"
+              />
+              <select 
+                value={newCategory} 
+                onChange={(e) => setNewCategory(e.target.value)}
+                className="admin-select"
+              >
+                {categories.filter(c => c !== "Баары").map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              <input 
+                type="number" 
+                placeholder="Баасы (сом менен)" 
+                value={newPrice} 
+                onChange={(e) => setNewPrice(e.target.value)} 
+                className="admin-input"
+              />
+              <input 
+                type="text" 
+                placeholder="Сүрөттүн шилтемеси (URL)" 
+                value={newImageUrl} 
+                onChange={(e) => setNewImageUrl(e.target.value)} 
+                className="admin-input"
+              />
+              <textarea 
+                placeholder="Кошумча сыпаттамасы" 
+                value={newDescription} 
+                onChange={(e) => setNewDescription(e.target.value)} 
+                className="admin-textarea"
+                rows={3}
+              />
+              <button type="submit" className="admin-submit-btn">Сайтка кошуу</button>
+            </form>
+          </div>
+        )}
+
         <div className="category-bar">
           {categories.map((cat) => (
             <button
@@ -115,6 +226,14 @@ export default function App() {
                 >
                   Буйрутма берүү (WhatsApp)
                 </button>
+                {isAdminLoggedIn && (
+                  <button 
+                    onClick={() => handleDeleteFurniture(item.id)}
+                    className="delete-btn"
+                  >
+                    Өчүрүү
+                  </button>
+                )}
               </div>
             </div>
           ))}
