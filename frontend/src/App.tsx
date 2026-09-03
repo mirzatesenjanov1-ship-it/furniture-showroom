@@ -9,9 +9,9 @@ interface FurnitureItem {
 }
 
 const sampleItems: FurnitureItem[] = [
-  { id: 1, name: "Заманбап диван", category: "Конок бөлмө", price: "25 000 сом", image: "https://via.placeholder.com/300x200?text=Sofa" },
-  { id: 2, name: "Жыгач стол", category: "Ашкана", price: "15 000 сом", image: "https://via.placeholder.com/300x200?text=Table" },
-  { id: 3, name: "Кровать Премиум", category: "Уктоочу бөлмө", price: "35 000 сом", image: "https://via.placeholder.com/300x200?text=Bed" }
+  { id: 1, name: "Заманбап диван", category: "Конок бөлмө", price: "25 000 сом", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500" },
+  { id: 2, name: "Жыгач стол", category: "Ашкана", price: "15 000 сом", image: "https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?w=500" },
+  { id: 3, name: "Кровать Премиум", category: "Уктоочу бөлмө", price: "35 000 сом", image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=500" }
 ];
 
 export default function App() {
