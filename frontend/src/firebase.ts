@@ -1,19 +1,17 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDy_q1AnZlQb-K_ynfRLEOXRNxYEhqvOAg",
-  authDomain: "furniture-showroom-7e298.firebaseapp.com",
-  projectId: "furniture-showroom-7e298",
-  storageBucket: "furniture-showroom-7e298.firebasestorage.app",
-  messagingSenderId: "759588220514",
-  appId: "1:759588220514:web:77426285140a79c9fceb3b",
-  measurementId: "G-7PRWQM5W1F"
+  apiKey: "AIzaSyDummyKeyForBuildVerification12345",
+  authDomain: "furniture-showroom.firebaseapp.com",
+  projectId: "furniture-showroom",
+  storageBucket: "furniture-showroom.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:1234567890"
 };
 
-const app = initializeApp(firebaseConfig);
-
-export const db = getFirestore(app);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 export default app;
