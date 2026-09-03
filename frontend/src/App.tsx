@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Furniture {
   id: number;
@@ -49,6 +49,40 @@ const defaultFurniture: Furniture[] = [
 
 const categories = ["Баары", "Конок бөлмө", "Ашкана", "Уктоочу бөлмө", "Кабинет"];
 
+// 1. Adsterra Banner (728x90) Компоненти
+const AdsterraBanner = () => {
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (bannerRef.current && !bannerRef.current.firstChild) {
+      const confScript = document.createElement('script');
+      confScript.type = 'text/javascript';
+      confScript.text = `
+        atOptions = {
+          'key' : '230e338703bb44150336cce1f0832fe3',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      `;
+
+      const invokeScript = document.createElement('script');
+      invokeScript.type = 'text/javascript';
+      invokeScript.src = '//www.highperformanceformat.com/230e338703bb44150336cce1f0832fe3/invoke.js';
+
+      bannerRef.current.appendChild(confScript);
+      bannerRef.current.appendChild(invokeScript);
+    }
+  }, []);
+
+  return (
+    <div style={{ textAlign: 'center', margin: '20px 0', overflow: 'hidden' }}>
+      <div ref={bannerRef}></div>
+    </div>
+  );
+};
+
 export default function App() {
   const [furnitureList, setFurnitureList] = useState<Furniture[]>(() => {
     const saved = localStorage.getItem('furniture_items');
@@ -63,6 +97,20 @@ export default function App() {
   const [newPrice, setNewPrice] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
+
+  // 2. Adsterra Social Bar Жарнамасын жүктөө
+  useEffect(() => {
+    const socialBarScript = document.createElement('script');
+    socialBarScript.type = 'text/javascript';
+    socialBarScript.src = 'https://pl30202824.effectivecpmnetwork.com/2a/5b/af/2a5bafdd419add82a1af8ec0def99355.js';
+    socialBarScript.async = true;
+
+    document.body.appendChild(socialBarScript);
+
+    return () => {
+      document.body.removeChild(socialBarScript);
+    };
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('furniture_items', JSON.stringify(furnitureList));
@@ -146,6 +194,9 @@ export default function App() {
       </header>
 
       <main className="main-content">
+        {/* Жогорку Баннер Жарнамасы */}
+        <AdsterraBanner />
+
         {isAdminLoggedIn && (
           <div className="admin-panel">
             <h2 className="admin-title">Жаңы эмерек кошуу</h2>
@@ -238,6 +289,9 @@ export default function App() {
             </div>
           ))}
         </div>
+
+        {/* Төмөнкү Баннер Жарнамасы */}
+        <AdsterraBanner />
       </main>
 
       <footer className="footer">
