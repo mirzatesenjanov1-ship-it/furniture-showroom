@@ -10,7 +10,9 @@ interface Furniture {
 }
 
 const WHATSAPP_NUMBER = "996706035765";
-const ADMIN_PASSWORD = "mirzat14051999";
+
+// Сырсөз коддо ачык текст катары көрүнбөйт (Base64 менен коддолгон)
+const PASS_HASH = "bWlyemF0MTQwNTE5OTk="; 
 
 const defaultFurniture: Furniture[] = [
   {
@@ -49,7 +51,7 @@ const defaultFurniture: Furniture[] = [
 
 const categories = ["Баары", "Конок бөлмө", "Ашкана", "Уктоочу бөлмө", "Кабинет"];
 
-// 1. Adsterra Banner (728x90) Компоненти
+// Adsterra Banner (728x90) Компоненти
 const AdsterraBanner = () => {
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -98,7 +100,33 @@ export default function App() {
   const [newDescription, setNewDescription] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
 
-  // 2. Adsterra Social Bar Жарнамасын жүктөө
+  // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U жана оң кликти бөгөттөө
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+        (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, []);
+
+  // Adsterra Social Bar Жарнамасы
   useEffect(() => {
     const socialBarScript = document.createElement('script');
     socialBarScript.type = 'text/javascript';
@@ -121,7 +149,7 @@ export default function App() {
       setIsAdminLoggedIn(false);
     } else {
       const pass = prompt("Админ сырсөзүн киргизиңиз:");
-      if (pass === ADMIN_PASSWORD) {
+      if (pass && btoa(pass) === PASS_HASH) {
         setIsAdminLoggedIn(true);
       } else if (pass !== null) {
         alert("Сырсөз туура эмес!");
@@ -194,7 +222,6 @@ export default function App() {
       </header>
 
       <main className="main-content">
-        {/* Жогорку Баннер Жарнамасы */}
         <AdsterraBanner />
 
         {isAdminLoggedIn && (
@@ -290,7 +317,6 @@ export default function App() {
           ))}
         </div>
 
-        {/* Төмөнкү Баннер Жарнамасы */}
         <AdsterraBanner />
       </main>
 
