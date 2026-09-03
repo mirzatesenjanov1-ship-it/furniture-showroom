@@ -6,13 +6,6 @@ export default defineConfig({
   base: '/furniture-showroom/',
   build: {
     outDir: 'dist',
-    emptyOutDir: true,
-    chunkSizeWarningLimit: 1600,
-    rollupOptions: {
-      onwarn(warning, warn) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
-        warn(warning);
-      }
-    }
+    emptyOutDir: true
   }
 });
