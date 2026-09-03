@@ -99,7 +99,16 @@ export default function App() {
   const [newDescription, setNewDescription] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
 
-  // F12 жана Коргоо
+  // Сайт шилтемесинен Издөө суроосун кабыл алуу (?q=Заманбап)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('q');
+    if (query) {
+      setSearchQuery(decodeURIComponent(query));
+    }
+  }, []);
+
+  // F12 жана Оң Кликти бөгөттөө
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -143,7 +152,7 @@ export default function App() {
     localStorage.setItem('furniture_items', JSON.stringify(furnitureList));
   }, [furnitureList]);
 
-  // Google Издөө системалары үчүн Автоматтык SEO Schema (Structured Data)
+  // Google Роботтору үчүн JSON-LD Автоматтык Индексация
   useEffect(() => {
     const schemaData = {
       "@context": "https://schema.org/",
@@ -219,7 +228,6 @@ export default function App() {
     }
   };
 
-  // Фильтр жана Издөө логикасы
   const filteredFurniture = furnitureList
     .filter(item => selectedCategory === "Баары" || item.category === selectedCategory)
     .filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()) || item.description.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -268,7 +276,7 @@ export default function App() {
             <form onSubmit={handleAddFurniture} className="admin-form">
               <input 
                 type="text" 
-                placeholder="Эмеректин аталышы (мисалы: Жумшак Диван)" 
+                placeholder="Эмеректин аталышы" 
                 value={newTitle} 
                 onChange={(e) => setNewTitle(e.target.value)} 
                 className="admin-input"
@@ -297,7 +305,7 @@ export default function App() {
                 className="admin-input"
               />
               <textarea 
-                placeholder="Кошумча сыпаттамасы (Google издөөдө оңой табуу үчүн баяндоо жазыңыз)" 
+                placeholder="Кошумча сыпаттамасы" 
                 value={newDescription} 
                 onChange={(e) => setNewDescription(e.target.value)} 
                 className="admin-textarea"
@@ -308,7 +316,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Издөө жана Сортировка панели */}
+        {/* Издөө жана Сортировка */}
         <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
           <input 
             type="text" 
@@ -330,7 +338,6 @@ export default function App() {
           </select>
         </div>
 
-        {/* Категориялар */}
         <div className="category-bar">
           {categories.map((cat) => (
             <button
@@ -343,7 +350,6 @@ export default function App() {
           ))}
         </div>
 
-        {/* Эмеректер витринасы */}
         <div className="furniture-grid">
           {filteredFurniture.length > 0 ? (
             filteredFurniture.map((item) => (
