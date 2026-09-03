@@ -10,8 +10,6 @@ interface Furniture {
 }
 
 const WHATSAPP_NUMBER = "996706035765";
-
-// Сырсөз коддо ачык текст катары көрүнбөйт (Base64 менен коддолгон)
 const PASS_HASH = "bWlyemF0MTQwNTE5OTk="; 
 
 const defaultFurniture: Furniture[] = [
@@ -51,7 +49,6 @@ const defaultFurniture: Furniture[] = [
 
 const categories = ["Баары", "Конок бөлмө", "Ашкана", "Уктоочу бөлмө", "Кабинет"];
 
-// Adsterra Banner (728x90) Компоненти
 const AdsterraBanner = () => {
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -92,6 +89,8 @@ export default function App() {
   });
 
   const [selectedCategory, setSelectedCategory] = useState("Баары");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("default");
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   const [newTitle, setNewTitle] = useState("");
@@ -100,7 +99,7 @@ export default function App() {
   const [newDescription, setNewDescription] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
 
-  // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U жана оң кликти бөгөттөө
+  // F12 жана Коргоо
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -126,7 +125,7 @@ export default function App() {
     };
   }, []);
 
-  // Adsterra Social Bar Жарнамасы
+  // Adsterra Social Bar
   useEffect(() => {
     const socialBarScript = document.createElement('script');
     socialBarScript.type = 'text/javascript';
@@ -142,6 +141,39 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('furniture_items', JSON.stringify(furnitureList));
+  }, [furnitureList]);
+
+  // Google Издөө системалары үчүн Автоматтык SEO Schema (Structured Data)
+  useEffect(() => {
+    const schemaData = {
+      "@context": "https://schema.org/",
+      "@type": "ItemList",
+      "itemListElement": furnitureList.map((item, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "Product",
+          "name": item.title,
+          "image": item.imageUrl,
+          "description": item.description,
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "KGS",
+            "price": item.price,
+            "availability": "https://schema.org/InStock"
+          }
+        }
+      }))
+    };
+
+    let scriptTag = document.getElementById('json-ld-schema');
+    if (!scriptTag) {
+      scriptTag = document.createElement('script');
+      scriptTag.id = 'json-ld-schema';
+      scriptTag.setAttribute('type', 'application/ld+json');
+      document.head.appendChild(scriptTag);
+    }
+    scriptTag.textContent = JSON.stringify(schemaData);
   }, [furnitureList]);
 
   const handleAdminLogin = () => {
@@ -187,9 +219,15 @@ export default function App() {
     }
   };
 
-  const filteredFurniture = selectedCategory === "Баары" 
-    ? furnitureList 
-    : furnitureList.filter(item => item.category === selectedCategory);
+  // Фильтр жана Издөө логикасы
+  const filteredFurniture = furnitureList
+    .filter(item => selectedCategory === "Баары" || item.category === selectedCategory)
+    .filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()) || item.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === "low-to-high") return a.price - b.price;
+      if (sortBy === "high-to-low") return b.price - a.price;
+      return 0;
+    });
 
   const handleOrderViaWhatsApp = (item: Furniture) => {
     const message = `Саламатсызбы! Мен ушул эмеректи буйрутма берейин дедим эле:\n\n*${item.title}*\nКатегория: ${item.category}\nБаасы: ${item.price.toLocaleString()} сом\n\nТолугураак маалымат бере аласызбы?`;
@@ -230,7 +268,7 @@ export default function App() {
             <form onSubmit={handleAddFurniture} className="admin-form">
               <input 
                 type="text" 
-                placeholder="Эмеректин аталышы" 
+                placeholder="Эмеректин аталышы (мисалы: Жумшак Диван)" 
                 value={newTitle} 
                 onChange={(e) => setNewTitle(e.target.value)} 
                 className="admin-input"
@@ -259,7 +297,7 @@ export default function App() {
                 className="admin-input"
               />
               <textarea 
-                placeholder="Кошумча сыпаттамасы" 
+                placeholder="Кошумча сыпаттамасы (Google издөөдө оңой табуу үчүн баяндоо жазыңыз)" 
                 value={newDescription} 
                 onChange={(e) => setNewDescription(e.target.value)} 
                 className="admin-textarea"
@@ -270,6 +308,29 @@ export default function App() {
           </div>
         )}
 
+        {/* Издөө жана Сортировка панели */}
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+          <input 
+            type="text" 
+            placeholder="Эмеректи издөө..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="admin-input"
+            style={{ flex: 1, minWidth: '200px' }}
+          />
+          <select 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value)}
+            className="admin-select"
+            style={{ width: 'auto', minWidth: '180px' }}
+          >
+            <option value="default">Иреттелиши (дефолт)</option>
+            <option value="low-to-high">Баасы: Арзандан кымбатка</option>
+            <option value="high-to-low">Баасы: Кымбаттан арзанга</option>
+          </select>
+        </div>
+
+        {/* Категориялар */}
         <div className="category-bar">
           {categories.map((cat) => (
             <button
@@ -282,39 +343,46 @@ export default function App() {
           ))}
         </div>
 
+        {/* Эмеректер витринасы */}
         <div className="furniture-grid">
-          {filteredFurniture.map((item) => (
-            <div key={item.id} className="card">
-              <div>
-                <div className="card-image-wrapper">
-                  <img src={item.imageUrl} alt={item.title} className="card-image" />
-                  <span className="card-badge">{item.category}</span>
+          {filteredFurniture.length > 0 ? (
+            filteredFurniture.map((item) => (
+              <div key={item.id} className="card">
+                <div>
+                  <div className="card-image-wrapper">
+                    <img src={item.imageUrl} alt={`${item.title} - Эмерек Дүйнөсү`} className="card-image" />
+                    <span className="card-badge">{item.category}</span>
+                  </div>
+                  <div className="card-body">
+                    <h3 className="card-title">{item.title}</h3>
+                    <p className="card-desc">{item.description}</p>
+                  </div>
                 </div>
-                <div className="card-body">
-                  <h3 className="card-title">{item.title}</h3>
-                  <p className="card-desc">{item.description}</p>
-                </div>
-              </div>
 
-              <div className="card-footer">
-                <div className="card-price">{item.price.toLocaleString()} сом</div>
-                <button
-                  onClick={() => handleOrderViaWhatsApp(item)}
-                  className="order-btn"
-                >
-                  Буйрутма берүү (WhatsApp)
-                </button>
-                {isAdminLoggedIn && (
-                  <button 
-                    onClick={() => handleDeleteFurniture(item.id)}
-                    className="delete-btn"
+                <div className="card-footer">
+                  <div className="card-price">{item.price.toLocaleString()} сом</div>
+                  <button
+                    onClick={() => handleOrderViaWhatsApp(item)}
+                    className="order-btn"
                   >
-                    Өчүрүү
+                    Буйрутма берүү (WhatsApp)
                   </button>
-                )}
+                  {isAdminLoggedIn && (
+                    <button 
+                      onClick={() => handleDeleteFurniture(item.id)}
+                      className="delete-btn"
+                    >
+                      Өчүрүү
+                    </button>
+                  )}
+                </div>
               </div>
+            ))
+          ) : (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: '#64748b' }}>
+              Тилекке каршы, мындай эмерек табылган жок.
             </div>
-          ))}
+          )}
         </div>
 
         <AdsterraBanner />
